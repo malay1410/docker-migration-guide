@@ -1,24 +1,14 @@
 #!/bin/bash
 
-# Configurable variables
-
-# Target Container to be migrated
-CONTAINER_NAME="$container_name" #Eg: my-web-app
-
-# Image used by the Container
-IMAGE_NAME="$image_name"  #Eg: nginx:latest
-
-# Ports exposed
-PORT_MAPPING="$port_mapping" #Eg: 8080:80
+# Prompt user for input
+read -p "🛠️  Enter container name to migrate: " CONTAINER_NAME
+read -p "📦 Enter Docker image name (e.g., repo/image:tag): " IMAGE_NAME
+read -p "🔌 Enter port mapping (e.g., 8080:80): " PORT_MAPPING
+read -p "👤 Enter remote server username: " REMOTE_USER
+read -p "🌐 Enter remote server address (hostname or IP): " REMOTE_HOST
 
 # Backup Tar File
 BACKUP_FILE="$HOME/image_${CONTAINER_NAME}.tar"
-
-# Your Login Credentials
-REMOTE_USER="$user" #Eg: ubuntu
-
-# Destination Server Location
-REMOTE_HOST="$destination_server_location" #Eg: 192.168.1.10 or server.example.com
 
 # Path where Backup Tar File needs to be stored
 REMOTE_PATH="/home/$REMOTE_USER"
@@ -44,7 +34,7 @@ ssh "${REMOTE_USER}@${REMOTE_HOST}" <<EOF || { echo "SSH command failed."; exit 
   echo "🔄 Running container..."
   docker run -dit \
     --name "$CONTAINER_NAME" \
-    -p $PORT_MAPPING \
+    -p \$PORT_MAPPING \
     --restart unless-stopped \
     "$IMAGE_NAME" || { echo "Failed to start container."; exit 1; }
 
